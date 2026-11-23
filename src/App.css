@@ -156,11 +156,29 @@
 }
 
 .card-head {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 4px;
   border-bottom: 1px solid #eef0f4;
   padding-bottom: 14px;
+}
+
+.close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: none;
+  background: none;
+  font-size: 28px;
+  line-height: 1;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.close:hover {
+  color: #111827;
 }
 
 .card-head h2 {

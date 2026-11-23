@@ -41,6 +41,7 @@ function App() {
               plan={plan}
               onCheckIn={() => checkIn(selected.id)}
               onSell={(planId) => sellMembership(selected.id, planId)}
+              onClose={() => setSelectedId(null)}
             />
           )}
         </section>

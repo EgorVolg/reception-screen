@@ -11,14 +11,23 @@ interface ClientCardProps {
   plan: Plan | undefined;
   onCheckIn: () => void;
   onSell: (planId: number) => void;
+  onClose: () => void;
 }
 
-export function ClientCard({ client, status, plan, onCheckIn, onSell }: ClientCardProps) {
+export function ClientCard({ client, status, plan, onCheckIn, onSell, onClose }: ClientCardProps) {
   const hasActive = status === "active";
 
   return (
     <>
       <div className="card-head">
+        <button
+          type="button"
+          className="close"
+          aria-label="Закрыть"
+          onClick={onClose}
+        >
+          ×
+        </button>
         <h2>{client.name}</h2>
         <p className="phone">{client.phone}</p>
         <span className={`badge status-${status}`}>
