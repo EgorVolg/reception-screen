@@ -73,6 +73,10 @@
   .layout {
     grid-template-columns: 1fr;
   }
+
+  .client-card {
+    order: -1;
+  }
 }
 
 .client-list ul {
