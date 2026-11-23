@@ -33,7 +33,7 @@ function App() {
         />
 
         <section className="client-card">
-          {!selected && <p className="empty">Выберите клиента слева</p>}
+          {!selected && <p className="empty">Выберите клиента</p>}
           {selected && (
             <ClientCard
               client={selected}
