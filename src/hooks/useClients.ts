@@ -1,10 +1,31 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { clients as initialClients, plans, type Client } from "../data";
 import { addDays, todayStr } from "../helpers";
 
+const STORAGE_KEY = "reception-screen:clients:v1";
+
+function loadClients(): Client[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return initialClients;
+    const parsed = JSON.parse(raw) as Client[];
+    return Array.isArray(parsed) ? parsed : initialClients;
+  } catch {
+    return initialClients;
+  }
+}
+
 export function useClients() {
-  const [clients, setClients] = useState<Client[]>(initialClients);
+  const [clients, setClients] = useState<Client[]>(loadClients);
   const today = todayStr();
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(clients));
+    } catch {
+      // ignore storage errors (e.g. quota exceeded)
+    }
+  }, [clients]);
 
   const checkIn = useCallback(
     (clientId: number) => {
