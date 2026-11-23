@@ -1,78 +1,65 @@
-# React + TypeScript + Vite
+# Pulsea — экран ресепшена
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Веб-приложение для ресепшена фитнес-клуба в экосистеме **Pulsea**. Позволяет администратору быстро находить клиента, проверять статус его абонемента, фиксировать посещения (чек-ин) и продавать новые абонементы.
 
-Currently, two official plugins are available:
+## Установка и запуск
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Приложение будет доступно по адресу `http://localhost:5173` (или другому порту, указанному в выводе Vite).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Скрипты
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Команда           | Описание                          |
+| ----------------- | --------------------------------- |
+| `npm run dev`     | Запуск dev-сервера с HMR          |
+| `npm run build`   | Проверка типов и продакшн-сборка  |
+| `npm run lint`    | Линтинг проекта ESLint            |
+| `npm run preview` | Локальный предпросмотр сборки     |
+
+## Возможности
+
+- Поиск клиентов по имени или номеру телефона (включая поиск по цифрам телефона).
+- Карточка клиента со статусом абонемента и его деталями.
+- Статусы абонемента: **Активен**, **Истёк**, **Занятия закончились**, **Нет абонемента**.
+- Чек-ин: добавляет дату посещения в историю и списывает одно занятие из абонемента (для лимитных тарифов).
+- Продажа абонемента по одному из тарифов с автоматическим расчётом даты окончания и остатка занятий.
+- История посещений клиента.
+- Данные клиентов сохраняются в `localStorage` браузера и переживают перезагрузку страницы.
+
+## Технологии
+
+- [React](https://react.dev/) 19 + TypeScript
+- [Vite](https://vite.dev/) как сборщик и dev-сервер
+- [React Compiler](https://react.dev/learn/react-compiler) — включён через `@rolldown/plugin-babel`
+- ESLint + typescript-eslint
+
+## Тарифы (абонементы)
+
+Тарифы определены в [`src/data/index.ts`](src/data/index.ts):
+
+| Тариф      | Занятий | Срок действия | Цена  |
+| ---------- | ------- | ------------- | ----- |
+| Разовое    | 1       | 7 дней        | 1000₽ |
+| 8 занятий  | 8       | 30 дней       | 6000₽ |
+| Безлимит   | ∞       | 30 дней       | 9000₽ |
+
+## Структура проекта
 
 ```
+src/
+├── components/    # Компоненты UI: список клиентов, карточка, шапка
+├── data/          # Модель данных: клиенты, тарифы, типы
+├── helpers/       # Утилиты: даты, форматирование, статусы, фильтрация
+├── hooks/         # React-хуки (useClients — состояние клиентов и localStorage)
+├── shared/        # Общие компоненты (логотип)
+├── App.tsx        # Корневой компонент приложения
+└── main.tsx       # Точка входа
+```
+
+## Хранение данных
+
+Список клиентов загружается из сид-данных `src/data/index.ts` и сохраняется в `localStorage` под ключом `reception-screen:clients:v1`. Все изменения (чек-ин, продажа абонемента) записываются обратно автоматически.
